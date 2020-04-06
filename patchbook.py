@@ -36,43 +36,11 @@ connectionTypes = {
 # Reset global variables
 lastModuleProcessed = ""
 lastVoiceProcessed = ""
-
-# Parse script arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("-file", type=str, default="",
-                    help="Name of the text file that will be parsed (including extension)")
-parser.add_argument("-debug", type=int, default=0,
-                    help="Enable Debugging Mode")
-parser.add_argument("-dir", type=str, default="LR",
-                    help="Graph direction: LR (left-to-right) or DN (top-to-bottom)")
-parser.add_argument("-modules", action="store_const", const="modules", dest="command",
-                    help="Print all modules")
-parser.add_argument("-print", action="store_const", const="print", dest="command",
-                    help="Print data structure")
-parser.add_argument("-export", action="store_const", const="export", dest="command",
-                    help="Print JSON")
-parser.add_argument("-connections", action="store_const", const="connections", dest="command",
-                    help="Print connections")
-parser.add_argument("-graph", action="store_const", const="graph", dest="command",
-                    help="Print dot code for graph")
-args = parser.parse_args()
-filename = args.file
-debugMode = args.debug
-direction = args.dir
-if args.command:
-    one_shot_command = args.command
-    quiet = True
-else:
-    one_shot_command = None
-    quiet = False
-
+debugMode = False
+quiet = False
 connectionID = 0
+direction = ""
 
-# Set up debugMode
-if args.debug == 1:
-    debugMode = True
-else:
-    debugMode = False
 
 
 def initial_print() -> None:
@@ -569,6 +537,43 @@ def printDict() -> None:
 
 
 if __name__ == "__main__":
+    # Parse script arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-file", type=str, default="",
+                        help="Name of the text file that will be parsed (including extension)")
+    parser.add_argument("-debug", type=int, default=0,
+                        help="Enable Debugging Mode")
+    parser.add_argument("-dir", type=str, default="LR",
+                        help="Graph direction: LR (left-to-right) or DN (top-to-bottom)")
+    parser.add_argument("-modules", action="store_const", const="modules", dest="command",
+                        help="Print all modules")
+    parser.add_argument("-print", action="store_const", const="print", dest="command",
+                        help="Print data structure")
+    parser.add_argument("-export", action="store_const", const="export", dest="command",
+                        help="Print JSON")
+    parser.add_argument("-connections", action="store_const", const="connections", dest="command",
+                        help="Print connections")
+    parser.add_argument("-graph", action="store_const", const="graph", dest="command",
+                        help="Print dot code for graph")
+    args = parser.parse_args()
+    filename = args.file
+    debugMode = args.debug
+    direction = args.dir
+    if args.command:
+        one_shot_command = args.command
+        quiet = True
+    else:
+        one_shot_command = None
+        quiet = False
+
+    connectionID = 0
+
+    # Set up debugMode
+    if args.debug == 1:
+        debugMode = True
+    else:
+        debugMode = False
+
     initial_print()
     parseFile(filename)
     askCommand()
