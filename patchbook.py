@@ -31,7 +31,6 @@ connectionTypes = {
     "c>": "clock"
 }
 
-
 # Reset global variables
 lastModuleProcessed = ""
 lastVoiceProcessed = ""
@@ -109,7 +108,8 @@ def parseFile(filename):
     global quiet
     lines = []
     try:
-        if not quiet: print("Loading file: " + filename)
+        if not quiet:
+            print("Loading file: " + filename)
         with open(filename, "r") as file:
             for l in file:
                 lines.append(l)
@@ -167,7 +167,7 @@ def regexLine(line):
     if debugMode:
         print("Cheking input for connections...")
     re_filter = re.compile(
-        r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
+            r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
     re_results = re_filter.search(line)
     try:
         results = re_results.groups()
@@ -306,7 +306,7 @@ def addConnection(list, voice="none"):
         input_dict[key] = arguments[key]
 
     mainDict["modules"][output_module]["connections"]["out"][output_port].append(
-        output_dict)
+            output_dict)
     mainDict["modules"][input_module]["connections"]["in"][input_port] = input_dict
     if debugMode:
         print("-----")
@@ -373,6 +373,7 @@ def askCommand(command=None):
         return
     askCommand()
 
+
 def _print_module(module):
     global mainDict, quiet
     print("-------")
@@ -400,7 +401,9 @@ def _print_module(module):
         print(p.title() + " = " + value)
     print()
 
-    if not quiet: print("-------")
+    if not quiet:
+        print("-------")
+
 
 def detailModule(all=False):
     global mainDict
@@ -468,7 +471,8 @@ def graphviz():
         print("Copy the code between the line break and paste it into https://dreampuf.github.io/GraphvizOnline/ to download a SVG / PNG chart.")
     conn = []
     total_string = ""
-    if not quiet: print("-------------------------")
+    if not quiet:
+        print("-------------------------")
     print("digraph G{\n" + rank_dir_token + "splines = polyline;\nordering=out;")
     total_string += "digraph G{\n" + rank_dir_token + "splines = polyline;\nordering=out;\n"
     for module in sorted(mainDict["modules"]):
@@ -492,16 +496,16 @@ def graphviz():
                         line_style_array.append(param + "=" + c[param])
                     elif param in linetypes[c["connection_type"]]:
                         line_style_array.append(
-                            param + "=" + linetypes[c["connection_type"]][param])
+                                param + "=" + linetypes[c["connection_type"]][param])
                 if len(line_style_array) > 0:
                     line_style = "[" + ', '.join(line_style_array) + "]"
                 else:
                     line_style = ""
                 in_formatted = "_" + \
-                    re.sub('[^A-Za-z0-9]+', '', c["input_port"])
+                               re.sub('[^A-Za-z0-9]+', '', c["input_port"])
                 connection_line = module.replace(" ", "") + ":" + out_formatted + from_token + \
-                    c["input_module"].replace(
-                        " ", "") + ":" + in_formatted + to_token + line_style
+                                  c["input_module"].replace(
+                                          " ", "") + ":" + in_formatted + to_token + line_style
                 conn.append([c["input_port"], connection_line])
 
         # Get all incoming connections:
@@ -534,7 +538,7 @@ def graphviz():
             middle = module.upper()
 
         final_box = module.replace(
-            " ", "") + "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
+                " ", "") + "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
         print(final_box)
         total_string += final_box + "; "
 
