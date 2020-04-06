@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import re
 import sys
 from typing import List, Optional
@@ -31,7 +30,6 @@ class PatchbookParser:
         self.connection_id = 0
 
         self.modules = {}
-
         self.comments = []
 
     def initial_print(self) -> None:
@@ -45,20 +43,6 @@ class PatchbookParser:
             print(f"Version {self._PARSER_VERSION}")
             print()
 
-    def get_script_path(self) -> str:
-        # Get path to python script
-        return os.path.dirname(os.path.realpath(sys.argv[0]))
-
-    def get_file_path(self, filename: str) -> str:
-        try:
-            # Append script path to the filename
-            base_dir = self.get_script_path()
-            filepath = os.path.join(base_dir, filename)
-            logger.debug(f"File path: {filepath}")
-            return filepath
-        except IndexError:
-            pass
-
     def parse_file(self, filename: str) -> None:
         # This function reads the txt file and process each line.
         lines = []
@@ -69,10 +53,10 @@ class PatchbookParser:
                 for l in file:
                     lines.append(l)
                     self.regex_line(l)
-        except TypeError:
-            print("ERROR. Please add text file path after the script.")
         except FileNotFoundError:
             print("ERROR. File not found.")
+            exit()
+
         if not self.quiet:
             print("File successfully processed.")
             print()
@@ -82,7 +66,7 @@ class PatchbookParser:
 
         # CHECK FOR COMMENTS
         logger.debug("Checking input for comments...")
-        re_filter = re.compile(r"^\/\/\s?(.+)$")  # Regex for "// Comments"
+        re_filter = re.compile(r"^//\s?(.+)$")  # Regex for "// Comments"
         re_results = re_filter.search(line.strip())
         try:
             comment = re_results.group().replace("//", "").strip()
@@ -94,7 +78,7 @@ class PatchbookParser:
 
         # CHECK FOR VOICES
         logger.debug("Checking input for voices...")
-        re_filter = re.compile(r"^(.+)\:$")  # Regex for "VOICE 1:"
+        re_filter = re.compile(r"^(.+):$")  # Regex for "VOICE 1:"
         re_results = re_filter.search(line)
         try:
             # For some reason the Regex filter was still detecting parameter declarations as voices,
@@ -109,10 +93,10 @@ class PatchbookParser:
 
         # CHECK FOR CONNECTIONS
         logger.debug("Checking input for connections...")
-        re_filter = re.compile(r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
+        re_filter = re.compile(r"-\s(.+)[(](.+)[)]\s(>>|->|[a-z]>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
         re_results = re_filter.search(line)
         try:
-            results = re_results.groups()
+            results = list(re_results.groups())
             voice = self.last_voice_processed
             if len(results) == 6:
                 logger.debug("New connection found, parsing info...")
@@ -126,21 +110,21 @@ class PatchbookParser:
         # CHECK PARAMETERS
         logger.debug("Checking for parameters...")
         # If single-line parameter declaration:
-        re_filter = re.compile(r"^\*\s(.+)\:\s?(.+)?$")
+        re_filter = re.compile(r"^\*\s(.+):\s?(.+)?$")
         re_results = re_filter.search(line.strip())
         try:
             # Get module name
             results = re_results.groups()
             module = results[0].strip().lower()
             logger.debug(f"New module found: {module}")
-            if results[1] != None:
+            if results[1] is not None:
                 # If parameters are also declared
                 parameters = results[1].split(" | ")
                 for p in parameters:
                     p = p.split(" = ")
                     self.add_parameter(module, p[0].strip().lower(), p[1].strip())
                 return
-            elif results[1] == None:
+            else:
                 logger.debug("No parameters found. Storing module as last_module_processed...")
                 self.last_module_processed = module
                 return
@@ -341,11 +325,6 @@ class PatchbookParser:
 
     def export_json(self) -> None:
         # Exports mainDict as json file
-        # name = filename.split(".")[0]
-        # filepath = getFilePath(name + '.json')
-        # print("Exporting dictionary as file: " + filepath)
-        # with open(filepath, 'w') as fp:
-        #     json.dump(mainDict, fp)
         print(json.dumps({
             "info": {"patchbook_version": self._PARSER_VERSION},
             "modules": self.modules,
@@ -451,7 +430,7 @@ class PatchbookParser:
         if len(self.comments) != 0:
             format_comments: str = ""
             comments_count = 0
-            for comment in self.comments:
+            for _ in self.comments:
                 comments_count += 1
                 format_comments += f"{{0}}"
                 if comments_count < len(self.comments):
