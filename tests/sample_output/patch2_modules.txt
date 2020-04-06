@@ -1,0 +1,126 @@
+-------
+Showing information for module: METROPOLIS
+
+Inputs:
+
+Outputs:
+Pitch > Lizard2 (Cv)  - Pitch - VOICE 1
+Pitch > Multifilter (1V/Oct)  - Pitch - VOICE 1
+Gate > Z4000 (Gate)  - Gate - VOICE 1
+Gate > Function (Gate)  - Gate - VOICE 1
+Clock > Sequentialvoltage (Clk In)  - Clock - VOICE 2
+Reset > Sequentialvoltage (Reset)  - Trigger - VOICE 2
+
+Parameters:
+
+-------
+-------
+Showing information for module: LIZARD2
+
+Inputs:
+Metropolis (Pitch) > Cv - Pitch
+
+Outputs:
+Out 2 > Multifilter (Input)  - Audio - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: MULTIFILTER
+
+Inputs:
+Lizard2 (Out 2) > Input - Audio
+Metropolis (Pitch) > 1V/Oct - Pitch
+Function (Pos Out) > Cv Input - Cv
+
+Outputs:
+Lpf > Optomix (Ch1 Signal)  - Audio - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: OPTOMIX
+
+Inputs:
+Multifilter (Lpf) > Ch1 Signal - Audio
+Z4000 (Out) > Ch1 Cv - Cv
+
+Outputs:
+
+Parameters:
+
+-------
+-------
+Showing information for module: Z4000
+
+Inputs:
+Metropolis (Gate) > Gate - Gate
+
+Outputs:
+Out > Optomix (Ch1 Cv)  - Cv - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: FUNCTION
+
+Inputs:
+Metropolis (Gate) > Gate - Gate
+
+Outputs:
+Pos Out > Multifilter (Cv Input)  - Cv - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: SEQUENTIALVOLTAGE
+
+Inputs:
+Metropolis (Clock) > Clk In - Clock
+Metropolis (Reset) > Reset - Trigger
+
+Outputs:
+Out > Braids (1V/Oct)  - Cv - VOICE 2
+
+Parameters:
+
+-------
+-------
+Showing information for module: BRAIDS
+
+Inputs:
+Sequentialvoltage (Out) > 1V/Oct - Cv
+
+Outputs:
+Out > A124 (Input)  - Audio - VOICE 2
+
+Parameters:
+
+-------
+-------
+Showing information for module: A124
+
+Inputs:
+Braids (Out) > Input - Audio
+E350 (Xy) > Cv2 - Cv
+
+Outputs:
+
+Parameters:
+
+-------
+-------
+Showing information for module: E350
+
+Inputs:
+
+Outputs:
+Xy > A124 (Cv2)  - Cv - VOICE 2
+
+Parameters:
+
+-------

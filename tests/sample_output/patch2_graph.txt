@@ -1,0 +1,33 @@
+Generating signal flow code for GraphViz.
+Copy the code between the line break and paste it into https://dreampuf.github.io/GraphvizOnline/ to download a SVG / PNG chart.
+-------------------------
+digraph G{
+rankdir = LR;
+splines = polyline;
+ordering=out;
+a124[label="{ {<_cv2> CV2 | <_input> INPUT}|A124| {}}"  shape=Mrecord]
+braids[label="{ {<_1voct> 1V/OCT}|BRAIDS| {<_out> OUT}}"  shape=Mrecord]
+e350[label="{ {}|E350| {<_xy> XY}}"  shape=Mrecord]
+function[label="{ {<_gate> GATE}|FUNCTION| {<_posout> POS OUT}}"  shape=Mrecord]
+lizard2[label="{ {<_cv> CV}|LIZARD2| {<_out2> OUT 2}}"  shape=Mrecord]
+metropolis[label="{ {}|METROPOLIS| {<_clock> CLOCK | <_gate> GATE | <_pitch> PITCH | <_reset> RESET}}"  shape=Mrecord]
+multifilter[label="{ {<_1voct> 1V/OCT | <_cvinput> CV INPUT | <_input> INPUT}|MULTIFILTER| {<_lpf> LPF}}"  shape=Mrecord]
+optomix[label="{ {<_ch1cv> CH1 CV | <_ch1signal> CH1 SIGNAL}|OPTOMIX| {}}"  shape=Mrecord]
+sequentialvoltage[label="{ {<_clkin> CLK IN | <_reset> RESET}|SEQUENTIALVOLTAGE| {<_out> OUT}}"  shape=Mrecord]
+z4000[label="{ {<_gate> GATE}|Z4000| {<_out> OUT}}"  shape=Mrecord]
+metropolis:_pitch:e  -> multifilter:_1voct:w  [color=blue]
+sequentialvoltage:_out:e  -> braids:_1voct:w  [color=gray]
+z4000:_out:e  -> optomix:_ch1cv:w  [color=gray]
+multifilter:_lpf:e  -> optomix:_ch1signal:w  [style=bold]
+metropolis:_clock:e  -> sequentialvoltage:_clkin:w  [color=purple, style=dashed]
+metropolis:_pitch:e  -> lizard2:_cv:w  [color=blue]
+function:_posout:e  -> multifilter:_cvinput:w  [color=gray]
+e350:_xy:e  -> a124:_cv2:w  [color=gray]
+metropolis:_gate:e  -> function:_gate:w  [color=red, style=dashed]
+metropolis:_gate:e  -> z4000:_gate:w  [color=red, style=dashed]
+braids:_out:e  -> a124:_input:w  [style=bold]
+lizard2:_out2:e  -> multifilter:_input:w  [style=bold]
+metropolis:_reset:e  -> sequentialvoltage:_reset:w  [color=orange, style=dashed]
+}
+-------------------------
+

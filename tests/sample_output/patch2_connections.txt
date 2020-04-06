@@ -1,0 +1,28 @@
+
+Printing all connections by type...
+
+Connection type: audio
+Lizard2 > Multifilter (Input)
+Multifilter > Optomix (Ch1 Signal)
+Braids > A124 (Input)
+
+Connection type: cv
+Z4000 > Optomix (Ch1 Cv)
+Function > Multifilter (Cv Input)
+Sequentialvoltage > Braids (1V/Oct)
+E350 > A124 (Cv2)
+
+Connection type: pitch
+Metropolis > Lizard2 (Cv)
+Metropolis > Multifilter (1V/Oct)
+
+Connection type: gate
+Metropolis > Z4000 (Gate)
+Metropolis > Function (Gate)
+
+Connection type: trigger
+Metropolis > Sequentialvoltage (Reset)
+
+Connection type: clock
+Metropolis > Sequentialvoltage (Clk In)
+
