@@ -5,11 +5,11 @@ CREATED BY SPEKTRO AUDIO
 http://spektroaudio.com/
 """
 
-import sys
-import re
-import os
 import argparse
 import json
+import os
+import re
+import sys
 
 # Parser INFO
 parserVersion = "b3"
