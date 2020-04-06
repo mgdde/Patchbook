@@ -1,75 +1,62 @@
 import pytest
 
-import patchbook
-from patchbook import _PARSER_VERSION, detailModule, exportJSON, graphviz, parseFile, printConnections, printDict
+from parser import PatchbookParser
 
 
 @pytest.mark.parametrize("patchname", ["patch1", "patch2", "syncpll"])
 class TestExamplePatch1:
     maxDiff = None
 
-    def teardown_method(self, method):
-        """
-        Currently the code isn't idempotent so we need to do some cleanup after every test run.
-
-        Hopefully this teardown code can be removed soon
-        """
-        print("Resetting globals...")
-        patchbook.mainDict = {
-            "info": {"patchbook_version": _PARSER_VERSION},
-            "modules": {},
-            "comments": []
-        }
-        patchbook.lastModuleProcessed = ""
-        patchbook.lastVoiceProcessed = ""
-        patchbook.quiet = False
-        patchbook.connectionID = 0
-        patchbook.direction = ""
-
     def test_parsefile_raise_no_errors(self, patchname):
-        parseFile(f"../Examples/{patchname}.txt")
+        p = PatchbookParser()
+        p.parse_file(f"../Examples/{patchname}.txt")
 
     def test_modules_prints_all_output(self, capsys, patchname):
         with capsys.disabled():
-            parseFile(f"../Examples/{patchname}.txt")
+            p = PatchbookParser()
+            p.parse_file(f"../Examples/{patchname}.txt")
 
-        detailModule(all=True)
+        p.detail_module(show_all=True)
         captured = capsys.readouterr()
         expected = open(f"sample_output/{patchname}_modules.txt").read()
-        assert expected == captured.out
+        assert captured.out == expected
 
     def test_printDict_output(self, capsys, patchname):
         with capsys.disabled():
-            parseFile(f"../Examples/{patchname}.txt")
+            p = PatchbookParser()
+            p.parse_file(f"../Examples/{patchname}.txt")
 
-        printDict()
+        p.print_dict()
         captured = capsys.readouterr()
         expected = open(f"sample_output/{patchname}_print.txt").read()
-        assert expected == captured.out
+        assert captured.out == expected
 
     def test_exportJSON_output(self, capsys, patchname):
         with capsys.disabled():
-            parseFile(f"../Examples/{patchname}.txt")
+            p = PatchbookParser()
+            p.parse_file(f"../Examples/{patchname}.txt")
 
-        exportJSON()
+        p.export_json()
         captured = capsys.readouterr()
         expected = open(f"sample_output/{patchname}_export.txt").read()
-        assert expected == captured.out
+        assert captured.out == expected
 
     def test_printConnections_output(self, capsys, patchname):
         with capsys.disabled():
-            parseFile(f"../Examples/{patchname}.txt")
+            p = PatchbookParser()
+            p.parse_file(f"../Examples/{patchname}.txt")
 
-        printConnections()
+        p.print_connections()
         captured = capsys.readouterr()
         expected = open(f"sample_output/{patchname}_connections.txt").read()
-        assert expected == captured.out
+        assert captured.out == expected
 
     def test_graphviz_output(self, capsys, patchname):
         with capsys.disabled():
-            parseFile(f"../Examples/{patchname}.txt")
+            p = PatchbookParser()
+            p.parse_file(f"../Examples/{patchname}.txt")
 
-        graphviz()
+        p.graphviz()
         captured = capsys.readouterr()
         expected = open(f"sample_output/{patchname}_graph.txt").read()
-        assert expected == captured.out
+        assert captured.out == expected
