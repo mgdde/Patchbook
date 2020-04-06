@@ -54,4 +54,7 @@ if __name__ == "__main__":
     p = PatchbookParser(quiet=quiet)
     p.initial_print()
     p.parse_file(filename)
-    p.ask_command(one_shot=one_shot)
+    try:
+        p.ask_command(one_shot=one_shot)
+    except KeyboardInterrupt:
+        exit()
