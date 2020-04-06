@@ -13,15 +13,15 @@ The markup language is designed to be easily readable and writeable by humans wh
 <!-- MarkdownTOC -->
 
 - Markup Description
-	- Voices
-	- Connections
-	- Parameters
-	- Comments:
-	- Examples
+    - Voices
+    - Connections
+    - Parameters
+    - Comments:
+    - Examples
 - Parser
-	- Requirements
-	- How to Use
-	- Data Structure
+    - Requirements
+    - How to Use
+    - Data Structure
 
 <!-- /MarkdownTOC -->
 
@@ -103,9 +103,9 @@ Parameters can be annotated in 2 different ways: single line or multiline. Every
 **Multi-Line**
 ```
 * Braids:  
-	| Mode = CSAW  
-	| Color = 50%  
-	| Timbre = 50%  
+    | Mode = CSAW  
+    | Color = 50%  
+    | Timbre = 50%  
 ```
 
 **Additional info**
@@ -135,29 +135,29 @@ Example:
 
 ```
 VOICE 1:
-	- Metropolis (Pitch) p> Braids (1v/oct) [weight=3]
-	- Metropolis (Gate) g> Function (Trigger)
-	- Braids (Out) -> Optomix (Ch1 Signal)
-	- Function (+ Out) >> Optomix (Ch1 CV)
-	- Function (- Out) >> Braids (Timbre CV)
-	- Optomix (Out 1) -> AUDIO INTERFACE (input)
+    - Metropolis (Pitch) p> Braids (1v/oct) [weight=3]
+    - Metropolis (Gate) g> Function (Trigger)
+    - Braids (Out) -> Optomix (Ch1 Signal)
+    - Function (+ Out) >> Optomix (Ch1 CV)
+    - Function (- Out) >> Braids (Timbre CV)
+    - Optomix (Out 1) -> AUDIO INTERFACE (input)
 
-	* Metropolis:
-	| BPM = 124
-	| Swing = 0
-	| Root = F
-	| Scale = Minor
-	| Mode = F. Forward
-	| Stages = 16
+    * Metropolis:
+    | BPM = 124
+    | Swing = 0
+    | Root = F
+    | Scale = Minor
+    | Mode = F. Forward
+    | Stages = 16
 
-	* Braids:
-	| Mode = Fold
-	| Timbre = 30%
-	| Timbre CV = -20%
-	| Color = 0%
+    * Braids:
+    | Mode = Fold
+    | Timbre = 30%
+    | Timbre CV = -20%
+    | Color = 0%
 
-	* Function: Rise = 50% | Fall = 50% | Curve = 30%
-	* Optomix: Damp = 0% | Control = 100%
+    * Function: Rise = 50% | Fall = 50% | Curve = 30%
+    * Optomix: Damp = 0% | Control = 100%
 ```
 
 ### Example 2
@@ -165,35 +165,35 @@ VOICE 1:
 ```
 VOICE 1:
 
-	- Metropolis (Pitch) p> Aether VCO (CV)
-	- Metropolis (Gate) g> Maths (Ch 1 Trigger)
-	- Metropolis (Gate) g> Maths (Ch 4 Trigger)
+    - Metropolis (Pitch) p> Aether VCO (CV)
+    - Metropolis (Gate) g> Maths (Ch 1 Trigger)
+    - Metropolis (Gate) g> Maths (Ch 4 Trigger)
 
-	* Aether VCO: LFO Freq = 5 | LFO PWM = 7
-	- Aether VCO (Pulse) -> Mixer (Ch1)
-	- Aether VCO (Sub 1) -> Tides (Clk)
-	- Tides (Bi) -> Mixer (Ch2)
-	- Aether VCO (Sub 2) -> Z3000 (HSync)
-	- Z3000 (Saw) -> Mixer (Ch3)
+    * Aether VCO: LFO Freq = 5 | LFO PWM = 7
+    - Aether VCO (Pulse) -> Mixer (Ch1)
+    - Aether VCO (Sub 1) -> Tides (Clk)
+    - Tides (Bi) -> Mixer (Ch2)
+    - Aether VCO (Sub 2) -> Z3000 (HSync)
+    - Z3000 (Saw) -> Mixer (Ch3)
 
-	- MultiLFO (LFO 1) >> Tides (Smoothness)
-	- MultiLFO (LFO 2 Triangle) >> Tides (Shape)
-	- MultiLFO (LFO 3 Triangle) >> Z3000 (PWM)
-	* MultiLFO:
-	| LFO 1 Freq = 3.8
-	| LFO 1 Shape = Sine
-	| LFO 1 S&H = 0
-	| LFO 2 Freq = 1
-	| LFO 3 Freq = 1
-	* Tides: PLL Mode = True | Freq = 60% | Smoothness = 70%
-	* Z3000: Freq = 1pm
+    - MultiLFO (LFO 1) >> Tides (Smoothness)
+    - MultiLFO (LFO 2 Triangle) >> Tides (Shape)
+    - MultiLFO (LFO 3 Triangle) >> Z3000 (PWM)
+    * MultiLFO:
+    | LFO 1 Freq = 3.8
+    | LFO 1 Shape = Sine
+    | LFO 1 S&H = 0
+    | LFO 2 Freq = 1
+    | LFO 3 Freq = 1
+    * Tides: PLL Mode = True | Freq = 60% | Smoothness = 70%
+    * Z3000: Freq = 1pm
 
-	- Maths (Ch 1) >> Multifilter (CV)
-	- Maths (Ch 4) >> uVCA (Ch1 CV)
+    - Maths (Ch 1) >> Multifilter (CV)
+    - Maths (Ch 4) >> uVCA (Ch1 CV)
 
-	- Mixer (Output) -> Multifilter (Input)
-	- Multifilter (LPF) -> uVCA (Ch1 Input)
-	- uVCA (Ch1 Output) -> AUDIO INTERFACE (In 3)
+    - Mixer (Output) -> Multifilter (Input)
+    - Multifilter (LPF) -> uVCA (Ch1 Input)
+    - uVCA (Ch1 Output) -> AUDIO INTERFACE (In 3)
 
 ```
 
