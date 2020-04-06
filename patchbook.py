@@ -399,7 +399,7 @@ def printConnections() -> None:
                 connection = connections[c]
                 for subc in connection:
                     if subc["connection_type"] == ctype_name:
-                        print(f"{module.title()} > {subc['input_module'].title()} ({subc['input_port'].title()}) ")
+                        print(f"{module.title()} > {subc['input_module'].title()} ({subc['input_port'].title()})")
         print()
 
 
@@ -491,7 +491,7 @@ def graphviz() -> None:
             param_count += 1
             module_params += f"{par.title()} = {params[par]}"
             if param_count < len(params.keys()):
-                module_params += '\n'
+                module_params += '\\n'
 
         # If module contains parameters
         if module_params != "":
