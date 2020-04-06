@@ -261,10 +261,9 @@ class PatchbookParser:
     def add_comment(self, value: str) -> None:
         self.comments.append(value)
 
-    def ask_command(self, command: Optional[str] = None):
-        global one_shot_command
-        if one_shot_command:
-            command = one_shot_command
+    def ask_command(self, command: Optional[str] = None, one_shot: bool = False):
+        if one_shot:
+            command = command
         if not command:
             command = input("> ").lower().strip()
 
@@ -283,7 +282,7 @@ class PatchbookParser:
         else:
             print("Invalid command, please try again.")
 
-        if one_shot_command:
+        if one_shot:
             return
         self.ask_command()
 

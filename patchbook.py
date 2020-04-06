@@ -40,10 +40,10 @@ if __name__ == "__main__":
     direction = args.dir
 
     if args.command:
-        one_shot_command = args.command
+        one_shot = True
         quiet = True
     else:
-        one_shot_command = None
+        one_shot = False
         quiet = False
 
     connectionID = 0
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     if args.debug == 1:
         logger.setLevel(logging.DEBUG)
 
-    p = PatchbookParser()
+    p = PatchbookParser(quiet=quiet)
     p.initial_print()
     p.parse_file(filename)
-    p.ask_command()
+    p.ask_command(one_shot=one_shot)
