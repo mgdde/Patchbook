@@ -12,11 +12,13 @@ import re
 import sys
 
 # Parser INFO
-parserVersion = "b3"
+from typing import Any, Dict, List, Optional, Union
+
+_PARSER_VERSION = "b3"
 
 # Reset main dictionary
-mainDict = {
-    "info": {"patchbook_version": parserVersion},
+mainDict: Dict[str, Union[Dict[str, str], Dict[Any, Any], List[Any]]] = {
+    "info": {"patchbook_version": _PARSER_VERSION},
     "modules": {},
     "comments": []
 }
@@ -73,7 +75,7 @@ else:
     debugMode = False
 
 
-def initial_print():
+def initial_print() -> None:
     global quiet
     if not quiet:
         print()
@@ -82,35 +84,35 @@ def initial_print():
         print("   Created by Spektro Audio   ")
         print("██████████████████████████████")
         print()
-        print("Version " + parserVersion)
+        print(f"Version {_PARSER_VERSION}")
         print()
 
 
-def get_script_path():
+def get_script_path() -> str:
     # Get path to python script
     return os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
-def getFilePath(filename):
+def getFilePath(filename: str) -> str:
     try:
         # Append script path to the filename
         base_dir = get_script_path()
         filepath = os.path.join(base_dir, filename)
         if debugMode:
-            print("File path: " + filepath)
+            print(f"File path: {filepath}")
         return filepath
     except IndexError:
         pass
 
 
-def parseFile(filename):
+def parseFile(filename: str) -> None:
     # This function reads the txt file and process each line.
     global quiet
     lines = []
     try:
         if not quiet:
-            print("Loading file: " + filename)
-        with open(filename, "r") as file:
+            print(f"Loading file: {filename}")
+        with open(filename) as file:
             for l in file:
                 lines.append(l)
                 regexLine(l)
@@ -123,14 +125,14 @@ def parseFile(filename):
         print()
 
 
-def regexLine(line):
+def regexLine(line: str) -> None:
     global lastModuleProcessed
     global lastVoiceProcessed
 
     if debugMode:
         print()
     if debugMode:
-        print("Processing: " + line)
+        print(f"Processing: {line}")
 
     # CHECK FOR COMMENTS
     if debugMode:
@@ -140,7 +142,7 @@ def regexLine(line):
     try:
         comment = re_results.group().replace("//", "").strip()
         if debugMode:
-            print("New comment found: " + comment)
+            print(f"New comment found: {comment}")
             addComment(comment)
         return
     except AttributeError:
@@ -157,7 +159,7 @@ def regexLine(line):
         results = re_results.group().replace(":", "")
         if "*" not in results and "-" not in results and "|" not in results:
             if debugMode:
-                print("New voice found: " + results.upper())
+                print(f"New voice found: {results.upper()}")
             lastVoiceProcessed = results.upper()
             return
     except AttributeError:
@@ -166,8 +168,7 @@ def regexLine(line):
     # CHECK FOR CONNECTIONS
     if debugMode:
         print("Cheking input for connections...")
-    re_filter = re.compile(
-            r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
+    re_filter = re.compile(r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
     re_results = re_filter.search(line)
     try:
         results = re_results.groups()
@@ -193,7 +194,7 @@ def regexLine(line):
         results = re_results.groups()
         module = results[0].strip().lower()
         if debugMode:
-            print("New module found: " + module)
+            print(f"New module found: {module}")
         if results[1] != None:
             # If parameters are also declared
             parameters = results[1].split(" | ")
@@ -213,21 +214,21 @@ def regexLine(line):
     if "|" in line and "=" in line and "*" not in line:
         module = lastModuleProcessed.lower()
         if debugMode:
-            print("Using global variable: " + module)
+            print(f"Using global variable: {module}")
         parameter = line.split(" = ")[0].replace("|", "").strip().lower()
         value = line.split(" = ")[1].strip()
         addParameter(module, parameter, value)
         return
 
 
-def parseArguments(args):
+def parseArguments(args: str) -> dict:
     # This method takes an arguments string like "[color = blue]" and converts it to a dictionary
     args_string = args.replace("[", "").replace("]", "")
     args_array = args_string.split(",")
     args_dict = {}
 
     if debugMode:
-        print("Parsing arguments: " + args)
+        print(f"Parsing arguments: {args}")
 
     for item in args_array:
         item = item.split("=")
@@ -235,7 +236,7 @@ def parseArguments(args):
         value = item[1].strip()
         args_dict[name] = value
         if debugMode:
-            print(name + " = " + value)
+            print(f"{name} = {value}")
 
     if debugMode:
         print("All arguments processes.")
@@ -243,7 +244,7 @@ def parseArguments(args):
     return args_dict
 
 
-def addConnection(list, voice="none"):
+def addConnection(a_list: List[str], voice: str = "none") -> None:
     global mainDict
     global connectionTypes
     global connectionID
@@ -254,32 +255,32 @@ def addConnection(list, voice="none"):
         print("Adding new connection...")
         print("-----")
 
-    output_module = list[0].lower().strip()
-    output_port = list[1].lower().strip()
+    output_module: str = a_list[0].lower().strip()
+    output_port: str = a_list[1].lower().strip()
 
     if debugMode:
-        print("Output module: " + output_module)
-        print("Output port: " + output_port)
+        print(f"Output module: {output_module}")
+        print(f"Output port: {output_port}")
 
     try:
-        connection_type = connectionTypes[list[2].lower()]
+        connection_type = connectionTypes[a_list[2].lower()]
         if debugMode:
-            print("Matched connection type: " + connection_type)
+            print(f"Matched connection type: {connection_type}")
     except KeyError:
-        print("Invalid connection: " + list[2])
+        print(f"Invalid connection: {a_list[2]}")
         connection_type = "cv"
 
-    input_module = list[3].lower().strip()
-    input_port = list[4].lower().strip()
+    input_module: str = a_list[3].lower().strip()
+    input_port: str = a_list[4].lower().strip()
 
-    if list[5] is not None:
-        arguments = parseArguments(list[5])
+    if a_list[5] is not None:
+        arguments = parseArguments(a_list[5])
     else:
         arguments = {}
 
     if debugMode:
-        print("Input module: " + input_module)
-        print("Input port: " + output_port)
+        print(f"Input module: {input_module}")
+        print(f"Input port: {output_port}")
 
     checkModuleExistance(output_module, output_port, "out")
     checkModuleExistance(input_module, input_port, "in")
@@ -312,11 +313,11 @@ def addConnection(list, voice="none"):
         print("-----")
 
 
-def checkModuleExistance(module, port="port", direction=""):
+def checkModuleExistance(module: str, port: str = "port", direction: str = "") -> None:
     global mainDict
 
     if debugMode:
-        print("Checking if module already existing in main dictionary: " + module)
+        print(f"Checking if module already existing in main dictionary: {module}")
 
     # Check if module exists in main dictionary
     if module not in mainDict["modules"]:
@@ -335,19 +336,19 @@ def checkModuleExistance(module, port="port", direction=""):
             mainDict["modules"][module]["connections"]["out"][port] = []
 
 
-def addParameter(module, name, value):
+def addParameter(module: str, name: str, value: str) -> None:
     checkModuleExistance(module)
     # Add parameter to mainDict
     if debugMode:
-        print("Adding parameter: " + module + " - " + name + " - " + value)
+        print(f"Adding parameter: {module} - {name} - {value}")
     mainDict["modules"][module]["parameters"][name] = value
 
 
-def addComment(value):
+def addComment(value: str) -> None:
     mainDict["comments"].append(value)
 
 
-def askCommand(command=None):
+def askCommand(command: Optional[str] = None):
     global one_shot_command
     if one_shot_command:
         command = one_shot_command
@@ -374,16 +375,15 @@ def askCommand(command=None):
     askCommand()
 
 
-def _print_module(module):
+def _print_module(module: str) -> None:
     global mainDict, quiet
     print("-------")
-    print("Showing information for module: " + module.upper())
+    print(f"Showing information for module: {module.upper()}")
     print()
     print("Inputs:")
     for c in mainDict["modules"][module]["connections"]["in"]:
         keyvalue = mainDict["modules"][module]["connections"]["in"][c]
-        print(keyvalue["output_module"].title() + " (" + keyvalue["output_port"].title(
-        ) + ") > " + c.title() + " - " + keyvalue["connection_type"].title())
+        print(f"{keyvalue['output_module'].title()} ({keyvalue['output_port'].title()}) > {c.title()} - {keyvalue['connection_type'].title()}")
     print()
 
     print("Outputs:")
@@ -391,21 +391,20 @@ def _print_module(module):
         port = mainDict["modules"][module]["connections"]["out"][x]
         for c in port:
             keyvalue = c
-            print(x.title() + " > " + keyvalue["input_module"].title() + " (" + keyvalue["input_port"].title(
-            ) + ") " + " - " + keyvalue["connection_type"].title() + " - " + keyvalue["voice"])
+            print(f"{x.title()} > {keyvalue['input_module'].title()} ({keyvalue['input_port'].title()})  - {keyvalue['connection_type'].title()} - {keyvalue['voice']}")
     print()
 
     print("Parameters:")
     for p in mainDict["modules"][module]["parameters"]:
         value = mainDict["modules"][module]["parameters"][p]
-        print(p.title() + " = " + value)
+        print(f"{p.title()} = {value}")
     print()
 
     if not quiet:
         print("-------")
 
 
-def detailModule(all=False):
+def detailModule(all:bool=False) -> None:
     global mainDict
     if not all:
         module = input("Enter module name: ").lower()
@@ -416,7 +415,7 @@ def detailModule(all=False):
             _print_module(module)
 
 
-def printConnections():
+def printConnections() -> None:
     print()
     print("Printing all connections by type...")
     print()
@@ -431,14 +430,12 @@ def printConnections():
             for c in connections:
                 connection = connections[c]
                 for subc in connection:
-                    # print(connection)
                     if subc["connection_type"] == ctype_name:
-                        print(module.title(
-                        ) + " > " + subc["input_module"].title() + " (" + subc["input_port"].title() + ") ")
+                        print(f"{module.title()} > {subc['input_module'].title()} ({subc['input_port'].title()}) ")
         print()
 
 
-def exportJSON():
+def exportJSON() -> None:
     # Exports mainDict as json file
     # name = filename.split(".")[0]
     # filepath = getFilePath(name + '.json')
@@ -448,7 +445,7 @@ def exportJSON():
     print(json.dumps(mainDict))
 
 
-def graphviz():
+def graphviz() -> None:
     global quiet, direction
     linetypes = {
         "audio": {"style": "bold"},
@@ -480,10 +477,11 @@ def graphviz():
         outputs = mainDict["modules"][module]["connections"]["out"]
         module_outputs = ""
         out_count = 0
+        out: str
         for out in sorted(outputs):
             out_count += 1
-            out_formatted = "_" + re.sub('[^A-Za-z0-9]+', '', out)
-            module_outputs += "<" + out_formatted + "> " + out.upper()
+            out_formatted: str = f"_{re.sub('[^A-Za-z0-9]+', '', out)}"
+            module_outputs += f"<{out_formatted}> {out.upper()}"
             if out_count < len(outputs.keys()):
                 module_outputs += " | "
             connections = outputs[out]
@@ -493,29 +491,26 @@ def graphviz():
                     "color", "weight", "style", "arrowtail", "dir"]
                 for param in graphviz_parameters:
                     if param in c:
-                        line_style_array.append(param + "=" + c[param])
+                        line_style_array.append(f"{param}={c[param]}")
                     elif param in linetypes[c["connection_type"]]:
-                        line_style_array.append(
-                                param + "=" + linetypes[c["connection_type"]][param])
+                        line_style_array.append(f"{param}={linetypes[c['connection_type']][param]}")
                 if len(line_style_array) > 0:
-                    line_style = "[" + ', '.join(line_style_array) + "]"
+                    line_style = f"[{', '.join(line_style_array)}]"
                 else:
                     line_style = ""
-                in_formatted = "_" + \
-                               re.sub('[^A-Za-z0-9]+', '', c["input_port"])
-                connection_line = module.replace(" ", "") + ":" + out_formatted + from_token + \
-                                  c["input_module"].replace(
-                                          " ", "") + ":" + in_formatted + to_token + line_style
+                in_formatted = f"_{re.sub('[^A-Za-z0-9]+', '', c['input_port'])}"
+                connection_line: str = f"{module.replace(' ', '')}:{out_formatted}{from_token}{c['input_module'].replace(' ', '')}:{in_formatted}{to_token}{line_style}"
                 conn.append([c["input_port"], connection_line])
 
         # Get all incoming connections:
         inputs = mainDict["modules"][module]["connections"]["in"]
         module_inputs = ""
         in_count = 0
+        inp: str
         for inp in sorted(inputs):
-            inp_formatted = "_" + re.sub('[^A-Za-z0-9]+', '', inp)
+            inp_formatted: str = f"_{re.sub('[^A-Za-z0-9]+', '', inp)}"
             in_count += 1
-            module_inputs += "<" + inp_formatted + "> " + inp.upper()
+            module_inputs += f"<{inp_formatted}> {inp.upper()}"
             if in_count < len(inputs.keys()):
                 module_inputs += " | "
 
@@ -523,11 +518,12 @@ def graphviz():
         params = mainDict["modules"][module]["parameters"]
         module_params = ""
         param_count = 0
+        par: str
         for par in sorted(params):
             param_count += 1
-            module_params += par.title() + " = " + params[par]
+            module_params += f"{par.title()} = {params[par]}"
             if param_count < len(params.keys()):
-                module_params += r'\n'
+                module_params += '\n'
 
         # If module contains parameters
         if module_params != "":
@@ -537,8 +533,7 @@ def graphviz():
             # Otherwise just display module name
             middle = module.upper()
 
-        final_box = module.replace(
-                " ", "") + "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
+        final_box = module.replace(" ", "") + "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
         print(final_box)
         total_string += final_box + "; "
 
@@ -548,11 +543,11 @@ def graphviz():
         total_string += c[1] + "; "
 
     if len(mainDict["comments"]) != 0:
-        format_comments = ""
+        format_comments: str = ""
         comments_count = 0
         for comment in mainDict["comments"]:
             comments_count += 1
-            format_comments += "{" + comment + "}"
+            format_comments += f"{{0}}"
             if comments_count < len(mainDict["comments"]):
                 format_comments += "|"
         format_comments = "comments[label=<{{{<b>PATCH COMMENTS</b>}|" + format_comments + "}}>  shape=Mrecord]"
@@ -567,10 +562,10 @@ def graphviz():
     return total_string
 
 
-def printDict():
+def printDict() -> None:
     global mainDict
     for key in mainDict["modules"]:
-        print(key.title() + ": " + str(mainDict["modules"][key]))
+        print(f"{key.title()}: {mainDict['modules'][key]}")
 
 
 if __name__ == "__main__":
