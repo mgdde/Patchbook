@@ -22,7 +22,6 @@ class TestExamplePatch1:
         }
         patchbook.lastModuleProcessed = ""
         patchbook.lastVoiceProcessed = ""
-        patchbook.debugMode = False
         patchbook.quiet = False
         patchbook.connectionID = 0
         patchbook.direction = ""

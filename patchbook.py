@@ -7,13 +7,17 @@ http://spektroaudio.com/
 
 import argparse
 import json
+import logging
 import os
 import re
 import sys
-
-# Parser INFO
 from typing import Any, Dict, List, Optional, Union
 
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(handler)
+
+# Parser INFO
 _PARSER_VERSION = "b3"
 
 # Reset main dictionary
@@ -36,11 +40,9 @@ connectionTypes = {
 # Reset global variables
 lastModuleProcessed = ""
 lastVoiceProcessed = ""
-debugMode = False
 quiet = False
 connectionID = 0
 direction = ""
-
 
 
 def initial_print() -> None:
@@ -66,8 +68,7 @@ def getFilePath(filename: str) -> str:
         # Append script path to the filename
         base_dir = get_script_path()
         filepath = os.path.join(base_dir, filename)
-        if debugMode:
-            print(f"File path: {filepath}")
+        logger.debug(f"File path: {filepath}")
         return filepath
     except IndexError:
         pass
@@ -97,28 +98,22 @@ def regexLine(line: str) -> None:
     global lastModuleProcessed
     global lastVoiceProcessed
 
-    if debugMode:
-        print()
-    if debugMode:
-        print(f"Processing: {line}")
+    logger.debug(f"Processing: {line}")
 
     # CHECK FOR COMMENTS
-    if debugMode:
-        print("Checking input for comments...")
+    logger.debug("Checking input for comments...")
     re_filter = re.compile(r"^\/\/\s?(.+)$")  # Regex for "// Comments"
     re_results = re_filter.search(line.strip())
     try:
         comment = re_results.group().replace("//", "").strip()
-        if debugMode:
-            print(f"New comment found: {comment}")
-            addComment(comment)
+        logger.debug(f"New comment found: {comment}")
+        addComment(comment)
         return
     except AttributeError:
         pass
 
     # CHECK FOR VOICES
-    if debugMode:
-        print("Cheking input for voices...")
+    logger.debug("Checking input for voices...")
     re_filter = re.compile(r"^(.+)\:$")  # Regex for "VOICE 1:"
     re_results = re_filter.search(line)
     try:
@@ -126,24 +121,21 @@ def regexLine(line: str) -> None:
         # so I'm also running the results through an if statement.
         results = re_results.group().replace(":", "")
         if "*" not in results and "-" not in results and "|" not in results:
-            if debugMode:
-                print(f"New voice found: {results.upper()}")
+            logger.debug(f"New voice found: {results.upper()}")
             lastVoiceProcessed = results.upper()
             return
     except AttributeError:
         pass
 
     # CHECK FOR CONNECTIONS
-    if debugMode:
-        print("Cheking input for connections...")
+    logger.debug("Checking input for connections...")
     re_filter = re.compile(r"\-\s(.+)[(](.+)[)]\s(\>\>|\-\>|[a-z]\>)\s(.+)[(](.+)[)]\s(\[.+\])?$")
     re_results = re_filter.search(line)
     try:
         results = re_results.groups()
         voice = lastVoiceProcessed
         if len(results) == 6:
-            if debugMode:
-                print("New connection found, parsing info...")
+            logger.debug("New connection found, parsing info...")
             # args = parseArguments(results[5])
             # results = results[:5]
             addConnection(results, voice)
@@ -152,8 +144,7 @@ def regexLine(line: str) -> None:
         pass
 
     # CHECK PARAMETERS
-    if debugMode:
-        print("Checking for parameters...")
+    logger.debug("Checking for parameters...")
     # If single-line parameter declaration:
     re_filter = re.compile(r"^\*\s(.+)\:\s?(.+)?$")
     re_results = re_filter.search(line.strip())
@@ -161,8 +152,7 @@ def regexLine(line: str) -> None:
         # Get module name
         results = re_results.groups()
         module = results[0].strip().lower()
-        if debugMode:
-            print(f"New module found: {module}")
+        logger.debug(f"New module found: {module}")
         if results[1] != None:
             # If parameters are also declared
             parameters = results[1].split(" | ")
@@ -171,8 +161,7 @@ def regexLine(line: str) -> None:
                 addParameter(module, p[0].strip().lower(), p[1].strip())
             return
         elif results[1] == None:
-            if debugMode:
-                print("No parameters found. Storing module as global variable...")
+            logger.debug("No parameters found. Storing module as global variable...")
             lastModuleProcessed = module
             return
     except AttributeError:
@@ -181,8 +170,7 @@ def regexLine(line: str) -> None:
     # If multi-line parameter declaration:
     if "|" in line and "=" in line and "*" not in line:
         module = lastModuleProcessed.lower()
-        if debugMode:
-            print(f"Using global variable: {module}")
+        logger.debug(f"Using global variable: {module}")
         parameter = line.split(" = ")[0].replace("|", "").strip().lower()
         value = line.split(" = ")[1].strip()
         addParameter(module, parameter, value)
@@ -195,19 +183,16 @@ def parseArguments(args: str) -> dict:
     args_array = args_string.split(",")
     args_dict = {}
 
-    if debugMode:
-        print(f"Parsing arguments: {args}")
+    logger.debug(f"Parsing arguments: {args}")
 
     for item in args_array:
         item = item.split("=")
         name = item[0].strip()
         value = item[1].strip()
         args_dict[name] = value
-        if debugMode:
-            print(f"{name} = {value}")
+        logger.debug(f"{name} = {value}")
 
-    if debugMode:
-        print("All arguments processes.")
+    logger.debug("All arguments processes.")
 
     return args_dict
 
@@ -219,21 +204,18 @@ def addConnection(a_list: List[str], voice: str = "none") -> None:
 
     connectionID += 1
 
-    if debugMode:
-        print("Adding new connection...")
-        print("-----")
+    logger.debug("Adding new connection...")
+    logger.debug("-----")
 
     output_module: str = a_list[0].lower().strip()
     output_port: str = a_list[1].lower().strip()
 
-    if debugMode:
-        print(f"Output module: {output_module}")
-        print(f"Output port: {output_port}")
+    logger.debug(f"Output module: {output_module}")
+    logger.debug(f"Output port: {output_port}")
 
     try:
         connection_type = connectionTypes[a_list[2].lower()]
-        if debugMode:
-            print(f"Matched connection type: {connection_type}")
+        logger.debug(f"Matched connection type: {connection_type}")
     except KeyError:
         print(f"Invalid connection: {a_list[2]}")
         connection_type = "cv"
@@ -246,15 +228,13 @@ def addConnection(a_list: List[str], voice: str = "none") -> None:
     else:
         arguments = {}
 
-    if debugMode:
-        print(f"Input module: {input_module}")
-        print(f"Input port: {output_port}")
+    logger.debug(f"Input module: {input_module}")
+    logger.debug(f"Input port: {output_port}")
 
     checkModuleExistance(output_module, output_port, "out")
     checkModuleExistance(input_module, input_port, "in")
 
-    if debugMode:
-        print("Appending output and input connections to mainDict...")
+    logger.debug("Appending output and input connections to mainDict...")
 
     output_dict = {
         "input_module": input_module,
@@ -277,15 +257,13 @@ def addConnection(a_list: List[str], voice: str = "none") -> None:
     mainDict["modules"][output_module]["connections"]["out"][output_port].append(
             output_dict)
     mainDict["modules"][input_module]["connections"]["in"][input_port] = input_dict
-    if debugMode:
-        print("-----")
+    logger.debug("-----")
 
 
 def checkModuleExistance(module: str, port: str = "port", direction: str = "") -> None:
     global mainDict
 
-    if debugMode:
-        print(f"Checking if module already existing in main dictionary: {module}")
+    logger.debug(f"Checking if module already existing in main dictionary: {module}")
 
     # Check if module exists in main dictionary
     if module not in mainDict["modules"]:
@@ -307,8 +285,7 @@ def checkModuleExistance(module: str, port: str = "port", direction: str = "") -
 def addParameter(module: str, name: str, value: str) -> None:
     checkModuleExistance(module)
     # Add parameter to mainDict
-    if debugMode:
-        print(f"Adding parameter: {module} - {name} - {value}")
+    logger.debug(f"Adding parameter: {module} - {name} - {value}")
     mainDict["modules"][module]["parameters"][name] = value
 
 
@@ -372,7 +349,7 @@ def _print_module(module: str) -> None:
         print("-------")
 
 
-def detailModule(all:bool=False) -> None:
+def detailModule(all: bool = False) -> None:
     global mainDict
     if not all:
         module = input("Enter module name: ").lower()
@@ -557,7 +534,6 @@ if __name__ == "__main__":
                         help="Print dot code for graph")
     args = parser.parse_args()
     filename = args.file
-    debugMode = args.debug
     direction = args.dir
     if args.command:
         one_shot_command = args.command
@@ -568,11 +544,8 @@ if __name__ == "__main__":
 
     connectionID = 0
 
-    # Set up debugMode
     if args.debug == 1:
-        debugMode = True
-    else:
-        debugMode = False
+        logger.setLevel(logging.DEBUG)
 
     initial_print()
     parseFile(filename)
