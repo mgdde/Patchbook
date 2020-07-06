@@ -1,0 +1,65 @@
+-------
+Showing information for module: METROPOLIS
+
+Inputs:
+
+Outputs:
+Pitch > Braids (1Voct)  - Pitch - VOICE 1
+Gate > Function (Trigger)  - Gate - VOICE 1
+
+Parameters:
+Bpm = 124
+Swing = 0
+Root = F
+Scale = Minor
+Mode = F. Forward
+Stages = 16
+
+-------
+-------
+Showing information for module: BRAIDS
+
+Inputs:
+Metropolis (Pitch) > 1Voct - Pitch
+Function (Negout) > Timbre Cv - Cv
+
+Outputs:
+Out > Optomix (Ch1 Signal)  - Audio - VOICE 1
+
+Parameters:
+Mode = Fold
+Timbre = 30%
+Timbre Cv = -20%
+Color = 0%
+
+-------
+-------
+Showing information for module: FUNCTION
+
+Inputs:
+Metropolis (Gate) > Trigger - Gate
+
+Outputs:
+Posout > Optomix (Ch1 Cv)  - Cv - VOICE 1
+Negout > Braids (Timbre Cv)  - Cv - VOICE 1
+
+Parameters:
+Rise = 50%
+Fall = 50%
+Curve = 30%
+
+-------
+-------
+Showing information for module: OPTOMIX
+
+Inputs:
+Braids (Out) > Ch1 Signal - Audio
+Function (Posout) > Ch1 Cv - Cv
+
+Outputs:
+
+Parameters:
+Damp = 0%
+Control = 100%
+
+-------

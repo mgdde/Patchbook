@@ -1,0 +1,20 @@
+
+Printing all connections by type...
+
+Connection type: audio
+Braids > Optomix (Ch1 Signal)
+
+Connection type: cv
+Function > Optomix (Ch1 Cv)
+Function > Braids (Timbre Cv)
+
+Connection type: pitch
+Metropolis > Braids (1Voct)
+
+Connection type: gate
+Metropolis > Function (Trigger)
+
+Connection type: trigger
+
+Connection type: clock
+

@@ -1,0 +1,143 @@
+-------
+Showing information for module: METROPOLIS
+
+Inputs:
+
+Outputs:
+Pitch > Aether Vco (Cv)  - Pitch - VOICE 1
+Gate > Maths (Ch 1 Trigger)  - Gate - VOICE 1
+Gate > Maths (Ch 4 Trigger)  - Gate - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: AETHER VCO
+
+Inputs:
+Metropolis (Pitch) > Cv - Pitch
+
+Outputs:
+Pulse > Mixer (Ch1)  - Audio - VOICE 1
+Sub 1 > Tides (Clk)  - Audio - VOICE 1
+Sub 2 > Z3000 (Hsync)  - Audio - VOICE 1
+
+Parameters:
+Lfo Freq = 5
+Lfo Pwm = 7
+
+-------
+-------
+Showing information for module: MATHS
+
+Inputs:
+Metropolis (Gate) > Ch 1 Trigger - Gate
+Metropolis (Gate) > Ch 4 Trigger - Gate
+
+Outputs:
+Ch 1 > Multifilter (Cv)  - Cv - VOICE 1
+Ch 4 > Uvca (Ch1 Cv)  - Cv - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: MIXER
+
+Inputs:
+Aether Vco (Pulse) > Ch1 - Audio
+Tides (Bi) > Ch2 - Audio
+Z3000 (Saw) > Ch3 - Audio
+
+Outputs:
+Output > Multifilter (Input)  - Audio - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: TIDES
+
+Inputs:
+Aether Vco (Sub 1) > Clk - Audio
+Multilfo (Lfo 1) > Smoothness - Cv
+Multilfo (Lfo 2 Triangle) > Shape - Cv
+
+Outputs:
+Bi > Mixer (Ch2)  - Audio - VOICE 1
+
+Parameters:
+Pll Mode = True
+Freq = 60%
+Smoothness = 70%
+
+-------
+-------
+Showing information for module: Z3000
+
+Inputs:
+Aether Vco (Sub 2) > Hsync - Audio
+Multilfo (Lfo 3 Triangle) > Pwm - Cv
+
+Outputs:
+Saw > Mixer (Ch3)  - Audio - VOICE 1
+
+Parameters:
+Freq = 1pm
+
+-------
+-------
+Showing information for module: MULTILFO
+
+Inputs:
+
+Outputs:
+Lfo 1 > Tides (Smoothness)  - Cv - VOICE 1
+Lfo 2 Triangle > Tides (Shape)  - Cv - VOICE 1
+Lfo 3 Triangle > Z3000 (Pwm)  - Cv - VOICE 1
+
+Parameters:
+Lfo 1 Freq = 3.8
+Lfo 1 Shape = Sine
+Lfo 1 S&H = 0
+Lfo 2 Freq = 1
+Lfo 3 Freq = 1
+
+-------
+-------
+Showing information for module: MULTIFILTER
+
+Inputs:
+Maths (Ch 1) > Cv - Cv
+Mixer (Output) > Input - Audio
+
+Outputs:
+Lpf > Uvca (Ch1 Input)  - Audio - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: UVCA
+
+Inputs:
+Maths (Ch 4) > Ch1 Cv - Cv
+Multifilter (Lpf) > Ch1 Input - Audio
+
+Outputs:
+Ch1 Output > Audio Interface (In 3)  - Audio - VOICE 1
+
+Parameters:
+
+-------
+-------
+Showing information for module: AUDIO INTERFACE
+
+Inputs:
+Uvca (Ch1 Output) > In 3 - Audio
+
+Outputs:
+
+Parameters:
+
+-------

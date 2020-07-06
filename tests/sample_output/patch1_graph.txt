@@ -1,0 +1,19 @@
+Generating signal flow code for GraphViz.
+Copy the code between the line break and paste it into https://dreampuf.github.io/GraphvizOnline/ to download a SVG / PNG chart.
+-------------------------
+digraph G{
+rankdir = LR;
+splines = polyline;
+ordering=out;
+braids[label="{ {<_1voct> 1VOCT | <_timbrecv> TIMBRE CV}|{{BRAIDS}|{Color = 0%\nMode = Fold\nTimbre = 30%\nTimbre Cv = -20%}}| {<_out> OUT}}"  shape=Mrecord]
+function[label="{ {<_trigger> TRIGGER}|{{FUNCTION}|{Curve = 30%\nFall = 50%\nRise = 50%}}| {<_negout> NEGOUT | <_posout> POSOUT}}"  shape=Mrecord]
+metropolis[label="{ {}|{{METROPOLIS}|{Bpm = 124\nMode = F. Forward\nRoot = F\nScale = Minor\nStages = 16\nSwing = 0}}| {<_gate> GATE | <_pitch> PITCH}}"  shape=Mrecord]
+optomix[label="{ {<_ch1cv> CH1 CV | <_ch1signal> CH1 SIGNAL}|{{OPTOMIX}|{Control = 100%\nDamp = 0%}}| {}}"  shape=Mrecord]
+metropolis:_pitch:e  -> braids:_1voct:w  [color=blue, weight=3]
+function:_posout:e  -> optomix:_ch1cv:w  [color=gray]
+braids:_out:e  -> optomix:_ch1signal:w  [style=bold]
+function:_negout:e  -> braids:_timbrecv:w  [color=gray]
+metropolis:_gate:e  -> function:_trigger:w  [color=red, style=dashed]
+}
+-------------------------
+

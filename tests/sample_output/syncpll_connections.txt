@@ -1,0 +1,31 @@
+
+Printing all connections by type...
+
+Connection type: audio
+Aether Vco > Mixer (Ch1)
+Aether Vco > Tides (Clk)
+Aether Vco > Z3000 (Hsync)
+Mixer > Multifilter (Input)
+Tides > Mixer (Ch2)
+Z3000 > Mixer (Ch3)
+Multifilter > Uvca (Ch1 Input)
+Uvca > Audio Interface (In 3)
+
+Connection type: cv
+Maths > Multifilter (Cv)
+Maths > Uvca (Ch1 Cv)
+Multilfo > Tides (Smoothness)
+Multilfo > Tides (Shape)
+Multilfo > Z3000 (Pwm)
+
+Connection type: pitch
+Metropolis > Aether Vco (Cv)
+
+Connection type: gate
+Metropolis > Maths (Ch 1 Trigger)
+Metropolis > Maths (Ch 4 Trigger)
+
+Connection type: trigger
+
+Connection type: clock
+
