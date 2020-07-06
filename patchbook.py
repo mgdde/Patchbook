@@ -456,7 +456,7 @@ def graphviz():
         "clock": {"color": "purple", "style": "dashed"}
     }
     if direction == "DN":
-        rank_dir_token = "rankdir = BT;\n"
+        rank_dir_token = "rankdir = TB;\n"
         from_token = ":s  -> "
         to_token = ":n  "
     else:
