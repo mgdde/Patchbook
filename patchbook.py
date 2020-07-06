@@ -31,6 +31,7 @@ connectionTypes = {
     "c>": "clock"
 }
 
+graphVizRemoveChars = "[- /]"
 
 # Reset global variables
 lastModuleProcessed = ""
@@ -499,9 +500,9 @@ def graphviz():
                     line_style = ""
                 in_formatted = "_" + \
                     re.sub('[^A-Za-z0-9]+', '', c["input_port"])
-                connection_line = module.replace(" ", "") + ":" + out_formatted + from_token + \
-                    c["input_module"].replace(
-                        " ", "") + ":" + in_formatted + to_token + line_style
+                connection_line = re.sub(graphVizRemoveChars, "", module) + ":" + out_formatted + from_token + \
+                    re.sub(graphVizRemoveChars, "", c["input_module"]) + \
+                    ":" + in_formatted + to_token + line_style
                 conn.append([c["input_port"], connection_line])
 
         # Get all incoming connections:
@@ -533,8 +534,8 @@ def graphviz():
             # Otherwise just display module name
             middle = module.upper()
 
-        final_box = module.replace(
-            " ", "") + "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
+        final_box = re.sub(graphVizRemoveChars, "", module) + \
+            "[label=\"{ {" + module_inputs + "}|" + middle + "| {" + module_outputs + "}}\"  shape=Mrecord]"
         print(final_box)
         total_string += final_box + "; "
 
